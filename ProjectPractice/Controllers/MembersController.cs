@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ProjectPractice.Models;
+using ProjectPractice.Models.Extensions;
+using ProjectPractice.Models.VMs;
 
 namespace ProjectPractice.Controllers
 {
@@ -21,7 +23,18 @@ namespace ProjectPractice.Controllers
         // GET: Members
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Members.ToListAsync());
+            var members = await _context.Members
+                .Select(x => x.EntityToVM())
+                .ToListAsync();
+
+			return View(members);
+        }
+
+        public IEnumerable<MemberIndexVM> GetSomeMembers(string account)
+        {
+            return _context.Members.Where(x => x.EmailAccount.Contains(account))
+                .Select(x => x.EntityToVM())
+                .ToList();
         }
 
         // GET: Members/Details/5

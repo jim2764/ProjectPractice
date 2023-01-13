@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ProjectPractice.Models.Member>
+﻿@model IEnumerable<ProjectPractice.Models.VMs.MemberIndexVM>
 
 @{
     ViewData["Title"] = "Index";
@@ -9,6 +9,12 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<div>
+    <button id="search" class="btn-primary">Search</button>
+    <input type="text" id="searchText"/>
+</div>
+
 <table class="table">
     <thead>
         <tr>
@@ -43,16 +49,57 @@
                 @Html.DisplayFor(modelItem => item.Address)
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <button class="btn-primary">Detail</button>
+                @*<a asp-action="Details" asp-route-id="@item.Id">Details</a> |*@
+                @*<a asp-action="Delete" asp-route-id="@item.Id">Delete</a>*@
             </td>
         </tr>
 }
     </tbody>
 </table>
 
-@section Script {
+@section Scripts {
     <script>
-        
+        // Search button
+        $("#search").on("click", function () {
+            let searchText = $("#searchText").val();
+
+            $.ajax({
+                type: "GET",
+                url: `http://localhost:5154/Members/GetSomeMembers?account=${searchText}`
+            }).done(function (data) {
+                console.log(data)
+                showTable(data);
+            }).fail(function (err) {
+                console.log(err.statusText)
+            })
+        })
+
+        // Show
+        function showTable(data) {
+            $("#tbody").empty();
+
+            for (let item of data) {
+                let tbody = $(`<tr>
+                                <td>
+                                    ${item.emailAccount}
+                                </td>
+                                <td>
+                                    ${item.realName}
+                                </td>
+                                <td>
+                                    ${item.mobile}
+                                </td>
+                                <td>
+                                    ${item.address}
+                                </td>
+                                <td>
+                                    <button class="btn-primary">Detail</button>
+                                </td>
+                            </tr>`)
+
+                $("#tbody").append(tbody);
+            }
+        }
     </script>
 }
