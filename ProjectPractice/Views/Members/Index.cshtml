@@ -11,8 +11,34 @@
 </p>
 
 <div>
-    <button id="search" class="btn-primary">Search</button>
-    <input type="text" id="searchText"/>
+    <select id="selectCity">
+        <option>請選擇縣市...</option>
+        <option>台北市</option>
+        <option>新北市</option>
+        <option>桃園市</option>
+        <option>台中市</option>
+        <option>台南市</option>
+        <option>高雄市</option>
+        <option>新竹縣</option>
+        <option>苗栗縣</option>
+        <option>彰化市</option>
+        <option>南投縣</option>
+        <option>雲林縣</option>
+        <option>嘉義縣</option>
+        <option>屏東縣</option>
+        <option>宜蘭縣</option>
+        <option>花蓮縣</option>
+        <option>台東縣</option>
+        <option>澎湖縣</option>
+        <option>金門縣</option>
+        <option>連江縣</option>
+        <option>基隆市</option>
+        <option>新竹市</option>
+        <option>嘉義市</option>
+    </select>
+    <span>EmailAccount</span>
+    <input type="text" id="searchText">
+    <button id="search">Search</button>
 </div>
 
 <table class="table">
@@ -28,14 +54,16 @@
                 @Html.DisplayNameFor(model => model.Mobile)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Address)
+                @Html.DisplayNameFor(model => model.BirthOfDate)
             </th>
-            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.City)
+            </th>
         </tr>
     </thead>
     <tbody id="tbody">
 @foreach (var item in Model) {
-        <tr>
+        <tr id="@item.Id">
             <td>
                 @Html.DisplayFor(modelItem => item.EmailAccount)
             </td>
@@ -46,12 +74,15 @@
                 @Html.DisplayFor(modelItem => item.Mobile)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Address)
+                @Html.DisplayFor(modelItem => item.BirthOfDate)
             </td>
             <td>
-                <button class="btn-primary">Detail</button>
-                @*<a asp-action="Details" asp-route-id="@item.Id">Details</a> |*@
-                @*<a asp-action="Delete" asp-route-id="@item.Id">Delete</a>*@
+                @Html.DisplayFor(modelItem => item.City)
+            </td>
+            <td>
+                @*<button class="btn-primary">Detail</button>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>*@
             </td>
         </tr>
 }
@@ -63,10 +94,11 @@
         // Search button
         $("#search").on("click", function () {
             let searchText = $("#searchText").val();
+            let selectValue = $("#selectCity").val();
 
             $.ajax({
                 type: "GET",
-                url: `http://localhost:5154/Members/GetSomeMembers?account=${searchText}`
+                url: `http://localhost:5154/Members/GetSomeMembers?account=${searchText}&selectCity=${selectValue}`
             }).done(function (data) {
                 console.log(data)
                 showTable(data);
@@ -80,7 +112,7 @@
             $("#tbody").empty();
 
             for (let item of data) {
-                let tbody = $(`<tr>
+                let tbody = $(`<tr id="${item.id}">
                                 <td>
                                     ${item.emailAccount}
                                 </td>
@@ -91,10 +123,10 @@
                                     ${item.mobile}
                                 </td>
                                 <td>
-                                    ${item.address}
+                                    ${item.birthOfDate}
                                 </td>
                                 <td>
-                                    <button class="btn-primary">Detail</button>
+                                    ${item.city}
                                 </td>
                             </tr>`)
 

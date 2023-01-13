@@ -10,9 +10,11 @@ namespace ProjectPractice.Models.Extensions
 			{
 				Id = source.Id,
 				EmailAccount = source.EmailAccount,
-				RealName = source.RealName,
-				Mobile = source.Mobile,
-				Address = source.Address
+				RealName = (source.RealName != null) ? source.RealName: string.Empty,
+				Mobile = (source.Mobile != null) ? source.Mobile : string.Empty,
+				// 城市是否這樣寫???
+				City = (source.Address != null) ? source.Address.Substring(0, 3) : string.Empty,
+				BirthOfDate = (source.BirthOfDate.HasValue) ? source.BirthOfDate.Value.ToString("yyyy-MM-dd") : string.Empty,
 			};
 		}
 	}
