@@ -1,10 +1,11 @@
-﻿using ProjectPractice.Models.VMs;
+﻿using ProjectPractice.Models.DTOs;
+using ProjectPractice.Models.VMs;
 
 namespace ProjectPractice.Models.Extensions
 {
 	public static class Extensions
 	{
-		public static MemberIndexVM EntityToIndexVM(this Member source)
+		public static MemberIndexVM DTOToIndexVM(this MemberDTO source)
 		{
 			return new MemberIndexVM()
 			{
@@ -25,6 +26,26 @@ namespace ProjectPractice.Models.Extensions
 				Id = source.Id,
 				EmailAccount = source.EmailAccount,
 				RealName = source.RealName
+			};
+		}
+
+		public static MemberDTO EntityToDTO(this Member source)
+		{
+			return new MemberDTO()
+			{
+				Id = source.Id,
+				EmailAccount = source.EmailAccount,
+				EncryptedPassword = source.EncryptedPassword,
+				RealName = source.RealName,
+				NickName = source.NickName,
+				BirthOfDate = source.BirthOfDate,
+				Mobile = source.Mobile,
+				Address = source.Address,
+				PhotoSticker = source.PhotoSticker,
+				About = source.About,
+				ConfirmCode = source.ConfirmCode,
+				IsConfirmed = source.IsConfirmed,
+				IsInBlackList = source.IsInBlackList
 			};
 		}
 	}

@@ -43,7 +43,7 @@
 
 <table class="table">
     <thead>
-        <tr>
+        <tr class="row-cols-6">
             <th>
                 @Html.DisplayNameFor(model => model.EmailAccount)
             </th>
@@ -59,6 +59,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.City)
             </th>
+            <th></th>
         </tr>
     </thead>
     <tbody id="tbody">
@@ -126,6 +127,8 @@
                                 </td>
                                 <td>
                                     ${item.city}
+                                </td>
+                                <td>
                                 </td>
                             </tr>`)
 

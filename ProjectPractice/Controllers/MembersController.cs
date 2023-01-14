@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ProjectPractice.Models;
+using ProjectPractice.Models.DTOs;
 using ProjectPractice.Models.Extensions;
+using ProjectPractice.Models.Repositories;
 using ProjectPractice.Models.VMs;
 
 namespace ProjectPractice.Controllers
@@ -14,31 +16,36 @@ namespace ProjectPractice.Controllers
     public class MembersController : Controller
     {
         private readonly PracticeContext _context;
+        private readonly MemberRepository _context2;
 
-        public MembersController(PracticeContext context)
+		public MembersController(PracticeContext context)
         {
             _context = context;
-        }
+            _context2 = new MemberRepository(context);
+
+		}
 
         // GET: Members
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var members = await _context.Members
-                .Select(x => x.EntityToIndexVM())
-                .ToListAsync();
+            var members = _context2.GetAll().Select(x => x.DTOToIndexVM());
 
 			return View(members);
         }
 
         public IEnumerable<MemberIndexVM> GetSomeMembers(string account, string selectCity)
         {
-            IEnumerable<Member> members = _context.Members;
+            IEnumerable<MemberDTO> members;
 
-			if (selectCity != "請選擇縣市...") members = members.Where(x => x.Address != null && x.Address.Contains(selectCity));
+            if (selectCity == "請選擇縣市..." && string.IsNullOrEmpty(account)) members = _context2.GetAll();   
 
-			if (!string.IsNullOrEmpty(account)) members = members.Where(x => x.EmailAccount != null && x.EmailAccount.Contains(account));
+            else if (selectCity == "請選擇縣市...") members = _context2.GetSomeAccount(account);
 
-            return members.Select(x => x.EntityToIndexVM()).ToList();
+            else if (string.IsNullOrEmpty(account)) members = _context2.GetSomeAddress(selectCity);
+
+            else members = _context2.GetSomeAccountAndAddress(account, selectCity);
+
+            return members.Select(x => x.DTOToIndexVM());
         }
 
         // GET: Members/Create
