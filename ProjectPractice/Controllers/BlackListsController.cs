@@ -6,42 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ProjectPractice.Models;
-using ProjectPractice.Models.Extensions;
-using ProjectPractice.Models.VMs;
 
 namespace ProjectPractice.Controllers
 {
-    public class MembersController : Controller
+    public class BlackListsController : Controller
     {
         private readonly PracticeContext _context;
 
-        public MembersController(PracticeContext context)
+        public BlackListsController(PracticeContext context)
         {
             _context = context;
         }
 
-        // GET: Members
+        // GET: BlackLists
         public async Task<IActionResult> Index()
         {
-            var members = await _context.Members
-                .Select(x => x.EntityToVM())
-                .ToListAsync();
-
-			return View(members);
+              return View(await _context.Members.ToListAsync());
         }
 
-        public IEnumerable<MemberIndexVM> GetSomeMembers(string account, string selectCity)
-        {
-            IEnumerable<Member> members = _context.Members;
-
-			if (selectCity != "請選擇縣市...") members = members.Where(x => x.Address != null && x.Address.Contains(selectCity));
-
-			if (!string.IsNullOrEmpty(account)) members = members.Where(x => x.EmailAccount != null && x.EmailAccount.Contains(account));
-
-            return members.Select(x => x.EntityToVM()).ToList();
-        }
-
-        // GET: Members/Details/5
+        // GET: BlackLists/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Members == null)
@@ -59,13 +42,13 @@ namespace ProjectPractice.Controllers
             return View(member);
         }
 
-        // GET: Members/Create
+        // GET: BlackLists/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Members/Create
+        // POST: BlackLists/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -81,7 +64,7 @@ namespace ProjectPractice.Controllers
             return View(member);
         }
 
-        // GET: Members/Edit/5
+        // GET: BlackLists/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Members == null)
@@ -97,7 +80,7 @@ namespace ProjectPractice.Controllers
             return View(member);
         }
 
-        // POST: Members/Edit/5
+        // POST: BlackLists/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -132,7 +115,7 @@ namespace ProjectPractice.Controllers
             return View(member);
         }
 
-        // GET: Members/Delete/5
+        // GET: BlackLists/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Members == null)
@@ -150,7 +133,7 @@ namespace ProjectPractice.Controllers
             return View(member);
         }
 
-        // POST: Members/Delete/5
+        // POST: BlackLists/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
