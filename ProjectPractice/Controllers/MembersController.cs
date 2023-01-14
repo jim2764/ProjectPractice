@@ -24,7 +24,7 @@ namespace ProjectPractice.Controllers
         public async Task<IActionResult> Index()
         {
             var members = await _context.Members
-                .Select(x => x.EntityToVM())
+                .Select(x => x.EntityToIndexVM())
                 .ToListAsync();
 
 			return View(members);
@@ -38,25 +38,7 @@ namespace ProjectPractice.Controllers
 
 			if (!string.IsNullOrEmpty(account)) members = members.Where(x => x.EmailAccount != null && x.EmailAccount.Contains(account));
 
-            return members.Select(x => x.EntityToVM()).ToList();
-        }
-
-        // GET: Members/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Members == null)
-            {
-                return NotFound();
-            }
-
-            var member = await _context.Members
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (member == null)
-            {
-                return NotFound();
-            }
-
-            return View(member);
+            return members.Select(x => x.EntityToIndexVM()).ToList();
         }
 
         // GET: Members/Create

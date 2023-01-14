@@ -4,7 +4,7 @@ namespace ProjectPractice.Models.Extensions
 {
 	public static class Extensions
 	{
-		public static MemberIndexVM EntityToVM(this Member source)
+		public static MemberIndexVM EntityToIndexVM(this Member source)
 		{
 			return new MemberIndexVM()
 			{
@@ -15,6 +15,16 @@ namespace ProjectPractice.Models.Extensions
 				// 城市是否這樣寫???
 				City = (source.Address != null) ? source.Address.Substring(0, 3) : string.Empty,
 				BirthOfDate = (source.BirthOfDate.HasValue) ? source.BirthOfDate.Value.ToString("yyyy-MM-dd") : string.Empty,
+			};
+		}
+
+		public static BlackListVM EntityToBlackVM(this Member source)
+		{
+			return new BlackListVM()
+			{
+				Id = source.Id,
+				EmailAccount = source.EmailAccount,
+				RealName = source.RealName
 			};
 		}
 	}

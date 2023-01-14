@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ProjectPractice.Models.Member>
+﻿@model IEnumerable<ProjectPractice.Models.VMs.BlackListVM>
 
 @{
     ViewData["Title"] = "BlackList";
@@ -6,9 +6,12 @@
 
 <h1>BlackList</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<div>
+    <span>EmailAccount:</span>
+    <input type="text" id="searchText">
+    <button id="search">Search</button>
+</div>
+
 <table class="table">
     <thead>
         <tr>
@@ -21,7 +24,7 @@
             <th></th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="tbody">
 @foreach (var item in Model) {
         <tr>
             <td>
@@ -31,7 +34,7 @@
                 @Html.DisplayFor(modelItem => item.RealName)
             </td>
             <td>
-                <button class="btn-primary">Delete</button>
+                <button id="@item.Id" class="btn-primary delete">Delete</button>
 @*                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>*@
@@ -40,3 +43,83 @@
 }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        // Search button
+        $("#search").on("click", function () {
+            let searchText = $("#searchText").val();
+
+            $.ajax({
+                type: "GET",
+                url: `http://localhost:5154/BlackLists/GetSomeBackListMembers?account=${searchText}`
+            }).done(function (data) {
+                console.log(data)
+                showTable(data);
+            }).fail(function (err) {
+                console.log(err.statusText)
+            })
+        })
+
+        // Delete Black List Member
+        $("#tbody").on("click", ".delete",function(){
+            const tr = $(this).parent().parent()
+            let id = $(this).prop("id");
+            const tds = $(this).parent().parent().find("td");
+            const text = `${tds.eq(0).text().trim()}`
+
+            Swal.fire({
+                title: "Are you sure?",
+                html: text,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Remove'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire(
+                        'Removed!',
+                        `${tds.eq(0).text().trim()} has removed`,
+                        'success'
+                    ).then((result) => {
+                        // Delete DB 黑名單
+                        $.ajax({
+                            type: "PUT",
+                            url: `http://localhost:5154/BlackLists/Delete?id=${id}`
+                        }).done(function (data) {
+
+                        }).fail(function (err) {
+                            console.log(err.statusText)
+                        })
+
+                        // Delte 此筆資料
+                        tr.remove();
+                    })
+                }
+            })
+        })
+
+        // Show
+        function showTable(data) {
+            $("#tbody").empty();
+
+            for (let item of data) {
+                let tbody = $(`<tr id="${item.id}">
+                                        <td>
+                                            ${item.emailAccount}
+                                        </td>
+                                        <td>
+                                            ${item.realName}
+                                        </td>
+                                        <td>
+                                            <button id="${item.id}" class="btn-primary delete">Delete</button>
+                                        </td>
+                                    </tr>`)
+
+                $("#tbody").append(tbody);
+            }
+        }
+
+    </script>
+}
